@@ -1,0 +1,20 @@
+// prisma/schema.prisma
+
+// Define the database connection
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")  // Uses the DATABASE_URL from .env
+}
+
+// Define Prisma client generator
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Example model
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
