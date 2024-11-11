@@ -3,7 +3,7 @@
 // Define the database connection
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")  // Uses the DATABASE_URL from .env
+  url      = env("DATABASE_URL")
 }
 
 // Define Prisma client generator
@@ -11,10 +11,49 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// Example model
-model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  createdAt DateTime @default(now())
+// Account model
+model Account {
+  id          String             @id @default(uuid())
+  code        String             @unique
+  name        String
+  type        String             // asset, liability, equity, revenue, expense
+  balance     Decimal            @default(0)
+  currency    String
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  transactions TransactionAccount[]
+
+  @@map("accounts")
+}
+
+// Transaction model
+model Transaction {
+  id          String             @id @default(uuid())
+  date        DateTime
+  description String
+  reference   String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  entries     TransactionAccount[]
+
+  @@map("transactions")
+}
+
+// TransactionAccount model
+model TransactionAccount {
+  id            String      @id @default(uuid())
+  transactionId String
+  accountId     String
+  type          String      // debit or credit
+  amount        Decimal
+  currency      String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  account       Account     @relation(fields: [accountId], references: [id])
+
+  @@map("transaction_accounts")
 }
