@@ -14,6 +14,11 @@ export interface FinancialStatement {
   };
 }
 
+// Extend the Account type to include the 'code' property
+interface ExtendedAccount extends Account {
+  code: string;
+}
+
 export class FinancialStatements {
   private chartOfAccounts: ChartOfAccounts;
 
@@ -22,22 +27,22 @@ export class FinancialStatements {
   }
 
   generateBalanceSheet(date: string): FinancialStatement {
-    const accounts = this.chartOfAccounts.getAllAccounts();
+    const trialBalance = this.generateTrialBalance();
     
-    const assets = this.groupAccounts(accounts.filter(a => a.type === 'asset'));
-    const liabilities = this.groupAccounts(accounts.filter(a => a.type === 'liability'));
-    const equity = this.groupAccounts(accounts.filter(a => a.type === 'equity'));
+    const assets = trialBalance.filter(a => a.type === 'asset');
+    const liabilities = trialBalance.filter(a => a.type === 'liability');
+    const equity = trialBalance.filter(a => a.type === 'equity');
 
-    const totalAssets = this.calculateTotal(assets);
-    const totalLiabilities = this.calculateTotal(liabilities);
-    const totalEquity = this.calculateTotal(equity);
+    const totalAssets = this.calculateTotal(assets.map(item => ({ amount: item.balance })));
+    const totalLiabilities = this.calculateTotal(liabilities.map(item => ({ amount: item.balance })));
+    const totalEquity = this.calculateTotal(equity.map(item => ({ amount: item.balance })));
 
     return {
       date,
       items: [
-        { name: 'Assets', amount: totalAssets, type: 'asset', subItems: assets },
-        { name: 'Liabilities', amount: totalLiabilities, type: 'liability', subItems: liabilities },
-        { name: 'Equity', amount: totalEquity, type: 'equity', subItems: equity }
+        { name: 'Assets', amount: totalAssets, type: 'asset', subItems: assets.map(item => ({ name: item.name, amount: item.balance })) },
+        { name: 'Liabilities', amount: totalLiabilities, type: 'liability', subItems: liabilities.map(item => ({ name: item.name, amount: item.balance })) },
+        { name: 'Equity', amount: totalEquity, type: 'equity', subItems: equity.map(item => ({ name: item.name, amount: item.balance })) }
       ],
       totals: {
         assets: totalAssets,
@@ -49,20 +54,20 @@ export class FinancialStatements {
   }
 
   generateIncomeStatement(startDate: string, endDate: string): FinancialStatement {
-    const accounts = this.chartOfAccounts.getAllAccounts();
+    const trialBalance = this.generateTrialBalance();
     
-    const revenue = this.groupAccounts(accounts.filter(a => a.type === 'revenue'));
-    const expenses = this.groupAccounts(accounts.filter(a => a.type === 'expense'));
+    const revenue = trialBalance.filter(a => a.type === 'revenue');
+    const expenses = trialBalance.filter(a => a.type === 'expense');
 
-    const totalRevenue = this.calculateTotal(revenue);
-    const totalExpenses = this.calculateTotal(expenses);
+    const totalRevenue = this.calculateTotal(revenue.map(item => ({ amount: item.balance })));
+    const totalExpenses = this.calculateTotal(expenses.map(item => ({ amount: item.balance })));
     const netIncome = totalRevenue - totalExpenses;
 
     return {
       date: `${startDate} to ${endDate}`,
       items: [
-        { name: 'Revenue', amount: totalRevenue, type: 'revenue', subItems: revenue },
-        { name: 'Expenses', amount: totalExpenses, type: 'expense', subItems: expenses }
+        { name: 'Revenue', amount: totalRevenue, type: 'revenue', subItems: revenue.map(item => ({ name: item.name, amount: item.balance })) },
+        { name: 'Expenses', amount: totalExpenses, type: 'expense', subItems: expenses.map(item => ({ name: item.name, amount: item.balance })) }
       ],
       totals: {
         revenue: totalRevenue,
@@ -73,12 +78,12 @@ export class FinancialStatements {
   }
 
   generateCashFlowStatement(startDate: string, endDate: string): FinancialStatement {
-    const accounts = this.chartOfAccounts.getAllAccounts();
+    const trialBalance = this.generateTrialBalance();
     
     // Group cash flows by activities
-    const operating = this.calculateOperatingCashFlow(accounts);
-    const investing = this.calculateInvestingCashFlow(accounts);
-    const financing = this.calculateFinancingCashFlow(accounts);
+    const operating = this.calculateOperatingCashFlow(trialBalance);
+    const investing = this.calculateInvestingCashFlow(trialBalance as ExtendedAccount[]);
+    const financing = this.calculateFinancingCashFlow(trialBalance as ExtendedAccount[]);
 
     const netCashFlow = operating + investing + financing;
 
@@ -117,7 +122,7 @@ export class FinancialStatements {
     return operatingAccounts.reduce((sum, account) => sum + account.balance, 0);
   }
 
-  private calculateInvestingCashFlow(accounts: Account[]): number {
+  private calculateInvestingCashFlow(accounts: ExtendedAccount[]): number {
     // Simplified investing cash flow calculation
     const investingAccounts = accounts.filter(
       account => account.type === 'asset' && account.code.startsWith('15') // Long-term assets
@@ -125,7 +130,7 @@ export class FinancialStatements {
     return investingAccounts.reduce((sum, account) => sum + account.balance, 0);
   }
 
-  private calculateFinancingCashFlow(accounts: Account[]): number {
+  private calculateFinancingCashFlow(accounts: ExtendedAccount[]): number {
     // Simplified financing cash flow calculation
     const financingAccounts = accounts.filter(
       account => 
@@ -133,5 +138,16 @@ export class FinancialStatements {
         account.type === 'equity' && account.code.startsWith('3') // Equity accounts
     );
     return financingAccounts.reduce((sum, account) => sum + account.balance, 0);
+  }
+
+  // Method to generate a trial balance from all accounts
+  generateTrialBalance(): Array<ExtendedAccount> {
+    const accounts = this.chartOfAccounts.getAllAccounts() as ExtendedAccount[];
+    return accounts.map(account => ({
+      ...account,
+      code: account.code || 'default-code', // Provide a default code if necessary
+      id: account.id || 'default-id', // Assuming 'id' might already exist, otherwise provide a default
+      currency: account.currency || 'ZAR' // Assuming 'currency' might already exist, otherwise provide a default
+    }));
   }
 }

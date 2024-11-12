@@ -1,5 +1,5 @@
 import React from 'react';
-import type { FinancialStatement } from '@/core/reports/FinancialStatements';
+import type { FinancialStatement } from '../../core/accounting/reports/FinancialStatements';
 
 interface Props {
   statement: FinancialStatement;

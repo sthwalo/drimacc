@@ -8,6 +8,11 @@ import { formatCurrency } from '../../utils/currency';
 export function TransactionList() {
   // Retrieve transactions from the store
   const { transactions } = useStore();
+  console.log(transactions); // Check the current state of transactions
+
+  if (transactions.length === 0) {
+    return <div>No transactions available.</div>;
+  }
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm">

@@ -1,9 +1,9 @@
 import React from 'react';
-import { useAccountStore } from '../stores/accountStore';
-import { useCurrencyStore } from '../stores/currencyStore';
+import { useStore } from '../../store/accountingStore';
+import { useCurrencyStore } from '../../store/currencyStore';
 
 export const FinancialReports: React.FC = () => {
-  const accounts = useAccountStore((state) => state.accounts);
+  const accounts = useStore((state) => state.accounts);
   const { defaultCurrency } = useCurrencyStore();
 
   const calculateTotals = () => {

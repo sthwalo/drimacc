@@ -55,7 +55,7 @@ Document Processing & Machine Learning
 
 Data Export
 
-	•	XLSX 0.18.5 (Excel Export with Formulas)
+	•	ExcelJS 4.4.0 (Excel Export with Formulas)
 	•	jsPDF 2.5.1 (PDF Generation)
 	•	jsPDF-AutoTable 3.8.1 (PDF Tables)
 

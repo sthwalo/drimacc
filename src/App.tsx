@@ -1,15 +1,15 @@
 import React from 'react';
 import { useLoadingStore } from './store/loadingStore';
-import { LoadingSpinner } from './components/common/LoadingSpinner';
-import { DocumentUpload } from './components/DocumentUpload';
-import { TransactionList } from './components/TransactionList';
-import { ChartOfAccounts } from './components/ChartOfAccounts';
-import { FinancialReports } from './components/FinancialReports';
-import { CurrencySelector } from './components/CurrencySelector';
-import { ExportData } from './components/ExportData';
-import { ManualTransactionInput } from './components/ManualTransactionInput';
-import { NotificationList } from './components/NotificationList';
+import { DocumentUpload } from './components/DocumentUpload/DocumentUpload';
+import { TransactionList } from './components/TransactionList/TransactionList';
+import { ChartOfAccounts } from './components/ChartOfAccounts/ChartOfAccounts';
+import { FinancialReports } from './components/FinancialReports/FinancialReports';
+import { CurrencySelector } from './components/CurrencySelector/CurrencySelector';
+import ExportData from './components/ExportData/ExportData';
+import ManualTransactionInput from './components/ManualInput/ManualTransactionInput';
+import  { NotificationList } from './components/Notifications/Notifications';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { TailSpin } from 'react-loader-spinner';
 
 function App() {
   // Access global loading state
@@ -22,7 +22,7 @@ function App() {
 
         <NotificationList />
 
-        {isLoading && <LoadingSpinner />} {/* Show loading spinner if loading */}
+        {isLoading && <TailSpin color="#00BFFF" height={100} width={100} />} {/* Show loading spinner if loading */}
 
         <ErrorBoundary>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

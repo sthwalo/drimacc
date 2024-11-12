@@ -11,45 +11,49 @@ interface AccountingStore {
   updateTransaction: (id: string, transaction: Partial<Transaction>) => void; // Action to update a transaction by ID
   updateAccount: (id: string, account: Partial<Account>) => void; // Action to update an account by ID
   setCurrency: (currency: string) => void;                   // Action to set the selected currency
+  logAuditEntry: (eventType: string, message: string) => void; // Add this line
 }
 
 // Create a Zustand store for accounting functionality
 export const useStore = create<AccountingStore>((set) => ({
-  transactions: [],         // Initialize an empty list of transactions
-  accounts: [],             // Initialize an empty list of accounts
-  selectedCurrency: 'ZAR',  // Default selected currency
+  transactions: [],
+  accounts: [
+    { id: '1000', code: '1000', name: 'Cash', type: 'asset', balance: 0, currency: 'ZAR', created: new Date(), modified: new Date() },
+    { id: '4000', code: '4000', name: 'Revenue', type: 'revenue', balance: 0, currency: 'ZAR', created: new Date(), modified: new Date() },
+    { id: '5000', code: '5000', name: 'Expenses', type: 'expense', balance: 0, currency: 'ZAR', created: new Date(), modified: new Date() },
+  ],
+  selectedCurrency: 'ZAR',
 
-  // Adds a new transaction to the transactions array
   addTransaction: (transaction) =>
     set((state) => ({
-      transactions: [...state.transactions, transaction]  // Append new transaction to existing transactions
+      transactions: [...state.transactions, transaction]
     })),
 
-  // Adds a new account to the accounts array
   addAccount: (account) =>
     set((state) => ({
-      accounts: [...state.accounts, account]  // Append new account to existing accounts
+      accounts: [...state.accounts, account]
     })),
 
-  // Updates a specific transaction by matching its ID
   updateTransaction: (id, transaction) =>
     set((state) => ({
       transactions: state.transactions.map((t) =>
-        t.id === id ? { ...t, ...transaction } : t  // Merge updates if IDs match, otherwise keep original transaction
+        t.id === id ? { ...t, ...transaction } : t
       )
     })),
-
-  // Updates a specific account by matching its ID
-  updateAccount: (id, account) =>
-    set((state) => ({
-      accounts: state.accounts.map((a) =>
-        a.id === id ? { ...a, ...account } : a  // Merge updates if IDs match, otherwise keep original account
-      )
-    })),
-
-  // Sets the selected currency for the store
-  setCurrency: (currency) =>
-    set(() => ({
-      selectedCurrency: currency  // Update the selected currency
-    }))
-}));
+    updateAccount: (id, account) =>
+      set((state) => ({
+        accounts: state.accounts.map((a) =>
+          a.id === id ? { ...a, ...account } : a
+        )
+      })), // Added missing closing parenthesis here
+  
+    setCurrency: (currency) =>
+      set(() => ({
+        selectedCurrency: currency
+      })),
+  
+    logAuditEntry: (eventType: string, message: string) => {
+      console.log(`[${eventType}]: ${message}`);
+      // Implement additional logging functionality as needed
+    }
+  }));

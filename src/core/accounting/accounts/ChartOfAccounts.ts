@@ -13,57 +13,57 @@ export class ChartOfAccounts {
     this.accounts = [
       {
         id: '1000',
-        code: '1000',
         name: 'Cash',
         type: 'asset',
         balance: 50000,
         created: now,
-        modified: now
+        modified: now,
+        currency: 'ZAR' // Set currency to 'ZAR'
       },
       {
         id: '1100',
-        code: '1100',
         name: 'Accounts Receivable',
         type: 'asset',
         balance: 25000,
         created: now,
-        modified: now
+        modified: now,
+        currency: 'ZAR' // Set currency to 'ZAR'
       },
       {
         id: '2000',
-        code: '2000',
         name: 'Accounts Payable',
         type: 'liability',
         balance: 15000,
         created: now,
-        modified: now
+        modified: now,
+        currency: 'ZAR' // Set currency to 'ZAR'
       },
       {
         id: '3000',
-        code: '3000',
         name: 'Owner\'s Equity',
         type: 'equity',
         balance: 60000,
         created: now,
-        modified: now
+        modified: now,
+        currency: 'ZAR' // Set currency to 'ZAR'
       },
       {
         id: '4000',
-        code: '4000',
         name: 'Revenue',
         type: 'revenue',
         balance: 100000,
         created: now,
-        modified: now
+        modified: now,
+        currency: 'ZAR' // Set currency to 'ZAR'
       },
       {
         id: '5000',
-        code: '5000',
         name: 'Expenses',
         type: 'expense',
         balance: 30000,
         created: now,
-        modified: now
+        modified: now,
+        currency: 'ZAR' // Set currency to 'ZAR'
       }
     ];
   }
@@ -81,8 +81,8 @@ export class ChartOfAccounts {
     const newAccount: Account = {
       ...account,
       id: this.generateAccountId(),
-      created: now,
-      modified: now
+      created: new Date(),
+      modified: new Date()
     };
     this.accounts.push(newAccount);
     return newAccount;

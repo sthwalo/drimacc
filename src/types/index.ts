@@ -9,6 +9,8 @@ export interface Account {
   currency: string;                // Currency code for the account balance
   description?: string;            // Optional description of the account
   parentId?: string;               // Optional parent account ID for hierarchical structures
+  created: Date;                   // Timestamp of account creation
+  modified: Date;                  // Timestamp of last modification
 }
 
 // Represents an audit log entry for tracking actions in the system
@@ -60,4 +62,13 @@ export interface AuditLogEntry {
   action: string;
   details: string;
   timestamp: string;
+}
+
+export interface TaxComplianceInfo {
+  complianceStatus: string;
+}
+
+// Extend this interface if you have a root state type
+export interface RootState {
+  tax: TaxComplianceInfo;
 }

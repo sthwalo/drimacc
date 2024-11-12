@@ -14,7 +14,11 @@
     "isolatedModules": true,
     "noEmit": true, // Avoid emitting JavaScript code, suitable for React projects
     "jsx": "react-jsx",
-    "outDir": "./dist" // Only needed if you plan to compile server code to an output directory
+    "outDir": "./dist", // Only needed if you plan to compile server code to an output directory
+    "baseUrl": ".", // Set the base URL for relative module names
+    "paths": {
+      "@/*": ["src/*"] // Map all modules starting with '@/' to the 'src' directory
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
